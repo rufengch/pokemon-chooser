@@ -1,4 +1,4 @@
-import effectiveMaps from "./effectiveMaps";
+const effectiveMaps = require('./effectiveMaps');
 
 const fightAgainst = (oponentType) => {
   const types = effectiveMaps[oponentType];
