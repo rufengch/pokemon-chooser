@@ -1,4 +1,4 @@
-const effectiveMaps = require('./effectiveMaps');
+const effectiveMaps = require('./effectiveMap');
 
 const fightAgainst = (oponentType) => {
   const types = effectiveMaps[oponentType];
@@ -7,6 +7,6 @@ const fightAgainst = (oponentType) => {
   return types.zero;
 };
 
-module.export = {
-  fightAgainstType,
+module.exports = {
+  fightAgainst,
 };

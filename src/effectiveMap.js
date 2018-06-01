@@ -19,7 +19,7 @@ const types = {
   fairy: 'fairy',
 };
 
-export const effectiveMaps = {
+module.exports = {
   [types.normal]: {
     double: [types.fighting], // fighting is super effective to normal
     half: [],
@@ -27,7 +27,7 @@ export const effectiveMaps = {
   },
   [types.fire]: {
     double: [types.water, types.ground, types.rock],
-    half: [types.fire, tyeps.grass, types.ice, types.bug, types.steel, types.fairy],
+    half: [types.fire, types.grass, types.ice, types.bug, types.steel, types.fairy],
     zero: [''],
   },
   [types.water]: {
