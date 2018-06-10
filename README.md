@@ -3,11 +3,23 @@
 ### The Problem
 
 When playing pokemon games, to fight effectively, I usually
-1. look for the type of the opponent pokemon
-2. go to a pokemon type chart to find types that are super effective to the opponent type
+1. look for the type(s) of the opponent pokemon
+2. find a pokemon type chart to find types that are super effective to the opponent type
 3. look through pokemons in my team for a super effective move
 
 The goal of this package is to make this process easier.
+
+### Usage
+
+`fightAgainst(string)`
+
+#### Arguments
+
+string *(string)*: The name of the pokemon, or the name of the type
+
+#### Returns
+
+*(object)*: Returns an object containing super effective, effective, not very effective, and no effect types.
 
 ### Reference
 
