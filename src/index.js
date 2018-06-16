@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 const effectiveMaps = require('./effectiveMap');
 const generation1 = require('./pokedex/generation-1');
 const generation2 = require('./pokedex/generation-2');
@@ -17,30 +19,12 @@ const generationData = [
   generation7,
 ];
 
-const getPokemonNameToTypeMap = () => {
-  return generationData.reduce((result, generation) => {
-    return generation.reduce((acc, obj) => {
-      acc[obj.name.toLowerCase()] = obj.types;
-      return acc;
-    }, result);
-  }, {});
-};
-
-const getResultByType = type => {
-  const typeResult = effectiveMaps[type];
-  const existingTypes = typeResult.superEffective.concat(typeResult.notVeryEffective).concat(typeResult.noEffect);
-  typeResult.normal = Object.keys(effectiveMaps).filter(type => {
-    return !existingTypes.includes(type);
-  });
-  return typeResult;
-};
-
 const fightAgainst = string => {
   // string should be a type or a pokomon's name
   if (!string) return {};
-  
+
   string = string.toLowerCase();
-  
+
   if (effectiveMaps[string]) {
     return getResultByType(string);
   }
@@ -48,9 +32,8 @@ const fightAgainst = string => {
   const pokemonNameToTypeMap = getPokemonNameToTypeMap();
   const pokemonTypes = pokemonNameToTypeMap[string];
   if (pokemonTypes) {
-    if (pokemonTypes.length === 1) return getResultByType(pokemonTypes[0].toLowerCase());
-
-    // the pokemon belongs to two types
+    if (pokemonTypes.length === 1) return getResultByType(pokemonTypes[0]);
+    if (pokemonTypes.length === 2) return getResultByTypes(pokemonTypes);
   }
 
   return {};
@@ -59,3 +42,35 @@ const fightAgainst = string => {
 module.exports = {
   fightAgainst,
 };
+
+function getPokemonNameToTypeMap() {
+  return generationData.reduce((result, generation) => {
+    return generation.reduce((acc, obj) => {
+      acc[obj.name.toLowerCase()] = obj.types;
+      return acc;
+    }, result);
+  }, {});
+}
+
+function getResultByType(type) {
+  type = type.toLowerCase();
+  const typeResult = effectiveMaps[type];
+  const existingTypes = typeResult.superEffective.concat(typeResult.notVeryEffective).concat(typeResult.noEffect);
+  typeResult.normal = _.difference(Object.keys(effectiveMaps), existingTypes);
+  return typeResult;
+}
+
+function getResultByTypes(pokemonTypes) {
+  const type1 = pokemonTypes[0];
+  const type1Result = getResultByType(type1);
+  const type2 = pokemonTypes[1];
+  const type2Result = getResultByType(type2);
+  const result = {};
+  result.superEffective4 = _.intersection(type1Result.superEffective, type2Result.superEffective);
+  result.superEffective = _.union(_.intersection(type1Result.superEffective, type2Result.normal), _.intersection(type2Result.superEffective, type1Result.normal));
+  result.normal = _.union(_.intersection(type1Result.normal, type2Result.normal), _.intersection(type1Result.superEffective, type2Result.notVeryEffective), _.intersection(type1Result.notVeryEffective, type2Result.superEffective));
+  result.notVeryEffective = _.union(_.intersection(type1Result.normal, type2Result.notVeryEffective), _.intersection(type1Result.notVeryEffective, type2Result.normal));
+  result.notVeryEffective4 = _.intersection(type1Result.notVeryEffective, type2Result.notVeryEffective);
+  result.noEffect = _.union(type1Result.noEffect, type2Result.noEffect);
+  return result;
+}
